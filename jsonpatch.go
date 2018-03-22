@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"sort"
 	"strings"
 )
 
@@ -83,12 +84,12 @@ func matchesValue(av, bv interface{}) bool {
 			return true
 		}
 	case float64:
-		bt, ok  := bv.(float64)
+		bt, ok := bv.(float64)
 		if ok && bt == at {
 			return true
 		}
 	case bool:
-		bt, ok  := bv.(bool)
+		bt, ok := bv.(bool)
 		if ok && bt == at {
 			return true
 		}
@@ -170,6 +171,7 @@ func diff(a, b map[string]interface{}, path string, patch []Operation) ([]Operat
 			return nil, err
 		}
 	}
+
 	// Now add all deleted values as nil
 	for key := range a {
 		_, found := b[key]
@@ -179,6 +181,7 @@ func diff(a, b map[string]interface{}, path string, patch []Operation) ([]Operat
 			patch = append(patch, NewPatch("remove", p, nil))
 		}
 	}
+
 	return patch, nil
 }
 
@@ -203,7 +206,29 @@ func handleValues(av, bv interface{}, p string, patch []Operation) ([]Operation,
 	case []interface{}:
 		bt := bv.([]interface{})
 		if isSimpleArray(at) && isSimpleArray(bt) {
-			patch = append(patch, compareEditDistance(at, bt, p)...)
+			ptc := compareEditDistance(at, bt, p)
+
+			// Gather removals
+			var removals []Operation
+			for _, v := range ptc {
+				if v.Operation == "remove" {
+					removals = append(removals, v)
+				}
+			}
+
+			// Filter out unsorted removals
+			var filtered []Operation
+			for _, v := range ptc {
+				if v.Operation != "remove" {
+					filtered = append(filtered, v)
+				}
+			}
+
+			// Add back removals in sorted order
+			sort.Sort(sort.Reverse(ByPath(removals)))
+
+			ptc = append(filtered, removals...)
+			patch = append(patch, ptc...)
 		} else {
 			n := min(len(at), len(bt))
 			for i := len(at) - 1; i >= n; i-- {
