@@ -208,18 +208,13 @@ func handleValues(av, bv interface{}, p string, patch []Operation) ([]Operation,
 		if isSimpleArray(at) && isSimpleArray(bt) {
 			ptc := compareEditDistance(at, bt, p)
 
-			// Gather removals
+			// Gather removals and non-removals
 			var removals []Operation
+			var filtered []Operation
 			for _, v := range ptc {
 				if v.Operation == "remove" {
 					removals = append(removals, v)
-				}
-			}
-
-			// Filter out unsorted removals
-			var filtered []Operation
-			for _, v := range ptc {
-				if v.Operation != "remove" {
+				} else {
 					filtered = append(filtered, v)
 				}
 			}
