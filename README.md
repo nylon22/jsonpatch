@@ -1,15 +1,15 @@
 # jsonpatch
 
-[![Build Status](https://travis-ci.org/nylon22/jsonpatch.svg?branch=master)](https://travis-ci.org/nylon22/jsonpatch)
-[![Go Report Card](https://goreportcard.com/badge/nylon22/jsonpatch "Go Report Card")](https://goreportcard.com/report/nylon22/jsonpatch)
-[![GoDoc](https://godoc.org/github.com/nylon22/jsonpatch?status.svg "GoDoc")](https://godoc.org/github.com/nylon22/jsonpatch)
+[![Build Status](https://travis-ci.org/appscode/jsonpatch.svg?branch=master)](https://travis-ci.org/appscode/jsonpatch)
+[![Go Report Card](https://goreportcard.com/badge/appscode/jsonpatch "Go Report Card")](https://goreportcard.com/report/appscode/jsonpatch)
+[![GoDoc](https://godoc.org/github.com/appscode/jsonpatch?status.svg "GoDoc")](https://godoc.org/github.com/appscode/jsonpatch)
 
 As per http://jsonpatch.com JSON Patch is specified in RFC 6902 from the IETF.
 
 JSON Patch allows you to generate JSON that describes changes you want to make to a document, so you don't have to send the whole doc. JSON Patch format is supported by HTTP PATCH method, allowing for standards based partial updates via REST APIs.
 
 ```console
-go get github.com/nylon22/jsonpatch
+go get github.com/appscode/jsonpatch
 ```
 
 I tried some of the other "jsonpatch" go implementations, but none of them could diff two json documents and 
@@ -32,7 +32,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/nylon22/jsonpatch"
+	"github.com/appscode/jsonpatch"
 )
 
 var simpleA = `{"a":100, "b":200, "c":"hello"}`
