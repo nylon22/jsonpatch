@@ -68,33 +68,63 @@ func TestArrayAlmostSame(t *testing.T) {
 }
 
 func TestArrayReplacement(t *testing.T) {
-	src := `{"letters":["A","B","C","D","E"]}`
-	to := `{"letters":["F","G","H"]}`
+	src := `{"letters":["A","B","C","D","E","F","G","H","I","J","K"]}`
+	to := `{"letters":["L","M","N"]}`
 	patch, e := CreatePatch([]byte(src), []byte(to))
 	assert.NoError(t, e)
-	assert.Equal(t, 5, len(patch), "they should be equal")
+	assert.Equal(t, 11, len(patch), "they should be equal")
 
 	change := patch[0]
 	assert.Equal(t, change.Operation, "replace", "they should be equal")
 	assert.Equal(t, change.Path, "/letters/0", "they should be equal")
-	assert.Equal(t, "F", change.Value, "they should be equal")
+	assert.Equal(t, "L", change.Value, "they should be equal")
 
 	change = patch[1]
 	assert.Equal(t, change.Operation, "replace", "they should be equal")
 	assert.Equal(t, change.Path, "/letters/1", "they should be equal")
-	assert.Equal(t, "G", change.Value, "they should be equal")
+	assert.Equal(t, "M", change.Value, "they should be equal")
 
 	change = patch[2]
 	assert.Equal(t, change.Operation, "replace", "they should be equal")
 	assert.Equal(t, change.Path, "/letters/2", "they should be equal")
-	assert.Equal(t, "H", change.Value, "they should be equal")
+	assert.Equal(t, "N", change.Value, "they should be equal")
 
 	change = patch[3]
+	assert.Equal(t, "remove", change.Operation, "they should be equal")
+	assert.Equal(t, "/letters/10", change.Path, "they should be equal")
+	assert.Equal(t, nil, change.Value, "they should be equal")
+
+	change = patch[4]
+	assert.Equal(t, "remove", change.Operation, "they should be equal")
+	assert.Equal(t, "/letters/9", change.Path, "they should be equal")
+	assert.Equal(t, nil, change.Value, "they should be equal")
+
+	change = patch[5]
+	assert.Equal(t, "remove", change.Operation, "they should be equal")
+	assert.Equal(t, "/letters/8", change.Path, "they should be equal")
+	assert.Equal(t, nil, change.Value, "they should be equal")
+
+	change = patch[6]
+	assert.Equal(t, "remove", change.Operation, "they should be equal")
+	assert.Equal(t, "/letters/7", change.Path, "they should be equal")
+	assert.Equal(t, nil, change.Value, "they should be equal")
+
+	change = patch[7]
+	assert.Equal(t, "remove", change.Operation, "they should be equal")
+	assert.Equal(t, "/letters/6", change.Path, "they should be equal")
+	assert.Equal(t, nil, change.Value, "they should be equal")
+
+	change = patch[8]
+	assert.Equal(t, "remove", change.Operation, "they should be equal")
+	assert.Equal(t, "/letters/5", change.Path, "they should be equal")
+	assert.Equal(t, nil, change.Value, "they should be equal")
+
+	change = patch[9]
 	assert.Equal(t, "remove", change.Operation, "they should be equal")
 	assert.Equal(t, "/letters/4", change.Path, "they should be equal")
 	assert.Equal(t, nil, change.Value, "they should be equal")
 
-	change = patch[4]
+	change = patch[10]
 	assert.Equal(t, "remove", change.Operation, "they should be equal")
 	assert.Equal(t, "/letters/3", change.Path, "they should be equal")
 	assert.Equal(t, nil, change.Value, "they should be equal")

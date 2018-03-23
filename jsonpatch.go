@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"reflect"
 	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -45,6 +46,25 @@ type ByPath []Operation
 func (a ByPath) Len() int           { return len(a) }
 func (a ByPath) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByPath) Less(i, j int) bool { return a[i].Path < a[j].Path }
+
+type ByPathIndex []Operation
+
+func (a ByPathIndex) Len() int      { return len(a) }
+func (a ByPathIndex) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a ByPathIndex) Less(i, j int) bool {
+	sp1 := strings.Split(a[i].Path, "/")
+	sp2 := strings.Split(a[j].Path, "/")
+	idx1, err := strconv.Atoi(sp1[len(sp1)-1])
+	if err != nil {
+		panic(fmt.Sprintf("expected int. got: %T", sp1[len(sp1)-1]))
+	}
+	idx2, err := strconv.Atoi(sp2[len(sp2)-1])
+	if err != nil {
+		panic(fmt.Sprintf("expected int. got: %T", sp2[len(sp2)-1]))
+	}
+
+	return idx1 < idx2
+}
 
 func NewPatch(operation, path string, value interface{}) Operation {
 	return Operation{Operation: operation, Path: path, Value: value}
@@ -219,9 +239,13 @@ func handleValues(av, bv interface{}, p string, patch []Operation) ([]Operation,
 				}
 			}
 
-			// Add back removals in sorted order
+			// Sort alphabetically by path
 			sort.Sort(sort.Reverse(ByPath(removals)))
 
+			// Sort numerically by path index
+			sort.Sort(sort.Reverse(ByPathIndex(removals)))
+
+			// Add back removals in sorted order
 			ptc = append(filtered, removals...)
 			patch = append(patch, ptc...)
 		} else {
